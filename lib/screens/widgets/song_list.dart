@@ -10,29 +10,12 @@ class SongListWidget extends StatefulWidget {
   State<SongListWidget> createState() => _SongListWidgetState();
 }
 
-class _SongListWidgetState extends State<SongListWidget>
-    with SingleTickerProviderStateMixin {
-  late AnimationController playPauseController;
-  late Animation<double> playPauseAnimation;
+class _SongListWidgetState extends State<SongListWidget> {
+  final MusicController musicController = Get.find();
 
-  @override
-  void initState() {
-    playPauseController =
-        AnimationController(vsync: this, duration: const Duration(seconds: 5));
-    playPauseAnimation =
-        Tween<double>(begin: 0, end: 1).animate(playPauseController);
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    playPauseController.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
-    final MusicController musicController = Get.find();
     return Obx(
       () => ListView.builder(
         itemCount: musicController.musics.length,
@@ -50,21 +33,21 @@ class _SongListWidgetState extends State<SongListWidget>
         onTap: () async {
           controller.playOrPauseMusic(music, index);
         },
-        child: Container(
-            width: 50,
-            height: 50,
-            decoration: BoxDecoration(
-              color: Colors.grey,
-              borderRadius: BorderRadius.circular(10),
+        child:  Container(
+          width: 50,
+          height: 50,
+          decoration: BoxDecoration(
+            color: Colors.grey,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Center(
+            child: Icon(
+              music.isPlaying
+                  ? Icons.pause
+                  : Icons.play_arrow,
             ),
-            child: Center(
-              child: AnimatedIcon(
-                icon: music.isPlaying
-                    ? AnimatedIcons.pause_play
-                    : AnimatedIcons.play_pause,
-                progress: playPauseAnimation,
-              ),
-            )),
+          ),
+        ),
       ),
       title: Text(
         music.musicName,
